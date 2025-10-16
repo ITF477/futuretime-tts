@@ -1,7 +1,5 @@
-// Vercel Serverless Function: /api/tts
-// Set env vars in Vercel: ELEVENLABS_API_KEY (required), ELEVENLABS_VOICE_ID (optional)
-
-module.exports = async (req, res) => {
+// /api/tts — Vercel Serverless Function (ESM)
+export default async function handler(req, res) {
   try {
     if (req.method === 'OPTIONS') {
       res.setHeader('Access-Control-Allow-Origin', '*');
@@ -10,11 +8,16 @@ module.exports = async (req, res) => {
       return res.status(204).end();
     }
 
+    // Parse JSON body (Vercel parses automatically for ESM; guard anyway)
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     const { text, voice_id, model_id, stability, similarity } = body;
-    if (!text || !text.trim()) return res.status(400).json({ error: 'Missing text' });
 
-    const VOICE_ID = voice_id || process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM'; // example default
+    if (!text || !text.trim()) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      return res.status(400).json({ error: 'Missing text' });
+    }
+
+    const VOICE_ID = voice_id || process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
     const MODEL_ID = model_id || 'eleven_multilingual_v2';
 
     const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
@@ -41,12 +44,13 @@ module.exports = async (req, res) => {
     }
 
     const buf = Buffer.from(await r.arrayBuffer());
-    res.setHeader('Access-Control-Allow-Origin', '*');  // allow Webflow origin
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).send(buf);
   } catch (e) {
     console.error(e);
+    res.setHeader('Access-Control-Allow-Origin', '*');
     return res.status(500).json({ error: 'Server error' });
   }
-};
+}
