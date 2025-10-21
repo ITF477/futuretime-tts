@@ -50,6 +50,7 @@ export default async function handler(req) {
         voice_settings: {
           stability: typeof stability === 'number' ? stability : 0.5,
           similarity_boost: typeof similarity === 'number' ? similarity : 0.8
+          speaking_rate: 1.3
         }
       }),
       signal: ac.signal
