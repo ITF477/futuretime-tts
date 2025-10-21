@@ -1,3 +1,5 @@
 {
-  "functions": { "api/**/*.js": { "memory": 128, "maxDuration": 10 } }
+  "functions": {
+    "api/tts.js": { "memory": 512, "maxDuration": 60 }
+  }
 }
