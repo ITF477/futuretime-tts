@@ -41,7 +41,7 @@ export default async function handler(req) {
       similarity_boost: typeof similarity === 'number' ? similarity : 0.8,
       // If you want to force faster speech globally, keep the next line.
       // If you only want it sometimes, pass speaking_rate in the POST body instead.
-      ...(typeof speaking_rate === 'number' ? { speaking_rate } : { speaking_rate: 1.5 })
+      ...(typeof speaking_rate === 'number' ? { speaking_rate } : { speaking_rate: 1.2 })
     };
 
     const upstream = await fetch(url, {
